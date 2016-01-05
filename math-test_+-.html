@@ -133,6 +133,9 @@ function generateTest() {
 	}	
 
 	// Show test
+	document.getElementById("DIV_TEST").style.display = "block";
+	//document.getElementById("DIV_TEST").style.visibility = "visible";
+	document.getElementById("DIV_FINAL").style.display = "none";
 	document.getElementById("HEADER").innerHTML = "Test " + TEST_NUM + "/" + NUMBER_OF_TESTS;
 	document.getElementById("X").innerHTML = X;
 	document.getElementById("OPERATOR").innerHTML = OP;
@@ -195,7 +198,10 @@ function showFinalReport() {
 		report = report + "<br>";
 	}
 
+	document.getElementById("DIV_TEST").style.display = "none";
+	document.getElementById("DIV_FINAL").style.display = "block";
 	document.getElementById("DIV_FINAL_REPORT").innerHTML = report;
+	document.getElementById("BUTTON_NEW").focus();
 }
 
 		</script>
@@ -203,7 +209,8 @@ function showFinalReport() {
 
 <body onload="generateTest()">
 	<h1>MATH TEST</h1>
-	<form id="TEST">
+	<div id="DIV_TEST">
+	<form>
 	<table border="0">
 		<tr>
 			<td colspan="8" id="HEADER">&nbsp;</td>
@@ -228,7 +235,13 @@ function showFinalReport() {
 		</tr>
 	</table>
 	</form>
+	</div>
 
+	<div id="DIV_FINAL">
 	<div id="DIV_FINAL_REPORT">
+	</div>
+	<form>
+	<input type="button" value="New test" id="BUTTON_NEW" onClick="location.reload()">
+	</form>
 	</div>
 </body>
