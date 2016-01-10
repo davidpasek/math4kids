@@ -7,7 +7,7 @@
 //
 //var DEBUG = true; // Run in debug mode?
 var DEBUG = false; // Run in debug mode?
-var NUMBER_OF_TESTS = 15; // Total number of tests is test set
+var NUMBER_OF_TESTS = 40; // Total number of tests is test set
 var TEST_NUM = 0; // Current number of test from test set
 // Test is X + Y = Z or X - Y = Z
 var X;
@@ -154,7 +154,14 @@ function generateTest() {
 function checkAnswer() {
 	var answer = document.getElementById("ANSWER").value;
 	var correct = false;
-	
+
+        // validate if answer is a number between 0 and 100
+        if ( (answer != "") && (answer >= 0) && (answer <= 100) ) {
+          // validation is ok
+        } else {
+          return;
+	}
+
 	if (answer == Z) {correct=true;}
 
 	if (DEBUG) {
@@ -220,7 +227,7 @@ function showFinalReport() {
 			<td id="OPERATOR" width="25px">op</td>
 			<td id="Y" width="25px">Y</td>
 			<td>=</td>
-			<td><input type="text" size="5" name="ANSWER" id="ANSWER" onKeyDown = "if (event.keyCode == 13) {event.keyCode=checkAnswer();return false;}"></td>
+			<td><input type="number" size="5" name="ANSWER" id="ANSWER" autofocus autocomplete="off" min="0" max="100" onKeyDown = "if (event.keyCode == 13) {event.keyCode=checkAnswer();return false;}"></td>
 			<td><input type="button" value="Check" id="CHECK" onClick="checkAnswer()"></td>
 			<td id="Z"></td>
 		</tr>
