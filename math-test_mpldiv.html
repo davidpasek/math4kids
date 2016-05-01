@@ -152,6 +152,7 @@ function generateTest() {
 			break;
 		case ":":
 			// X : Y = Z
+		        if (Y == 0) {Y=1}; // to avoid div 0
 			Z = Math.random()*10000 % MAX_NUM;
 			Z = Math.round(Z);
 			Y = Math.random()*10000 % MAX_NUM;
