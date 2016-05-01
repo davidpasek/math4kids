@@ -7,13 +7,45 @@
 //
 //var DEBUG = true; // Run in debug mode?
 var DEBUG = false; // Run in debug mode?
-var NUMBER_OF_TESTS = 40; // Total number of tests is test set
+var NUMBER_OF_TESTS = 5; // Total number of tests is test set
+var MAX_NUM=100; // Maximal Z number in tests X + Y = Z and X number in tests X - Y = Z
 var TEST_NUM = 0; // Current number of test from test set
 // Test is X + Y = Z or X - Y = Z
 var X;
 var Y;
 var OP; // +,-
 var Z; // Test result is in variable Z
+
+// Function to get URL parameters
+var getUrlParameter = function getUrlParameter(sParam) {
+	var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+       	    sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+	for (i = 0; i < sURLVariables.length; i++) {
+		sParameterName = sURLVariables[i].split('=');
+
+	        if (sParameterName[0] === sParam) {
+			return sParameterName[1] === undefined ? true : sParameterName[1];
+		}
+	}
+};
+
+// user defined number of tests
+var num = getUrlParameter('n');
+if (num > 0) {
+	NUMBER_OF_TESTS = num;
+}
+
+// user defined max number in tests
+var max = getUrlParameter('m');
+if (max > 0) {
+	MAX_NUM = max;
+}
+
+// * GLOBAL VARIABLES - end
+// ***************************
 
 // Object Test keeps a particular test for final statistics
 var Test = function(X,Y,OP,Z,Answer,Correct) {
@@ -96,7 +128,7 @@ TestSet.prototype.isAnswerCorrect = function (t) {
 var MyTestSet = new TestSet();
 
 function generateTest() {
-	var Z_MAX=100;
+	var Z_MAX=MAX_NUM;
 	var OP_r = Math.random();
 
 	// Increase number of test
@@ -116,12 +148,13 @@ function generateTest() {
 	// Generate X and Y
 	switch (OP) {
 		case "+":
+			if (Z == 0) {Z=1}; // to avoid div 0
 			Y = Math.random()*10000 % Z;
 			Y = Math.round(Y);
 			X = Z - Y;
 			break;
 		case "-":
-			if (Z == 100) {
+			if (Z == Z_MAX) {
 				Y = 0;
 			} else {
 				Y = Math.random()*10000 % (Z_MAX - Z);
@@ -155,11 +188,11 @@ function checkAnswer() {
 	var answer = document.getElementById("ANSWER").value;
 	var correct = false;
 
-        // validate if answer is a number between 0 and 100
-        if ( (answer != "") && (answer >= 0) && (answer <= 100) ) {
-          // validation is ok
+        // validate if answer is a number between 0 and 1000
+        if ( (answer != "") && (answer >= 0) && (answer <= 1000) ) {
+        	// validation is ok
         } else {
-          return;
+        	return;
 	}
 
 	if (answer == Z) {correct=true;}
