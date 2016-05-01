@@ -1,0 +1,276 @@
+<html>
+	<head>
+		<title>Math test</title>
+		<script>
+// ***************************
+// * GLOBAL VARIABLES
+//
+//var DEBUG = true; // Run in debug mode?
+var DEBUG = false; // Run in debug mode?
+var NUMBER_OF_TESTS = 5; // Total number of tests is test set
+var MAX_NUM=5; // Maximal X and Y number in tests X * Y = Z and Y and Z in tests X / Y = Z
+var TEST_NUM = 0; // Current number of test from test set
+// Test is X + Y = Z or X - Y = Z
+var X;
+var Y;
+var OP; // *,:
+var Z; // Test result is in variable Z
+
+// Function to get URL parameters
+var getUrlParameter = function getUrlParameter(sParam) {
+	var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+       	    sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+	for (i = 0; i < sURLVariables.length; i++) {
+		sParameterName = sURLVariables[i].split('=');
+
+	        if (sParameterName[0] === sParam) {
+			return sParameterName[1] === undefined ? true : sParameterName[1];
+		}
+	}
+};
+
+// user defined number of tests
+var num = getUrlParameter('n');
+if (num > 0) {
+	NUMBER_OF_TESTS = num;
+}
+
+// user defined max number in tests
+var max = getUrlParameter('m');
+if (max > 0) {
+	MAX_NUM = max;
+}
+
+// * GLOBAL VARIABLES - end
+// ***************************
+
+// Object Test keeps a particular test for final statistics
+var Test = function(X,Y,OP,Z,Answer,Correct) {
+	this.X = X;
+	this.Y = Y;
+	this.OP = OP;
+	this.Z = Z;
+	this.Answer = Answer;
+	this.Correct = Correct;
+}
+
+Test.prototype.getX = function () {
+	return this.X;
+}
+
+Test.prototype.getY = function () {
+	return this.Y;
+}
+
+Test.prototype.getOP = function () {
+	return this.OP;
+}
+
+Test.prototype.getZ = function () {
+	return this.Z;
+}
+
+Test.prototype.getAnswer = function () {
+	return this.Answer;
+}
+
+Test.prototype.isAnswerCorrect = function () {
+	return this.Correct;
+}
+
+// Object TestSet is a container for tests
+var TestSet = function() {
+	this.Tests = [];
+}
+
+TestSet.prototype.addTest = function (X,Y,OP,Z,Answer,Correct) {
+	var test = new Test(X,Y,OP,Z,Answer,Correct);
+	this.Tests.push(test);
+}
+
+TestSet.prototype.getNumOfTests = function () {
+	return this.Tests.length;
+}
+
+TestSet.prototype.getX = function (t) {
+	var test = this.Tests[t];
+	return test.getX();
+}
+
+TestSet.prototype.getY = function (t) {
+	var test = this.Tests[t];
+	return test.getY();
+}
+
+TestSet.prototype.getOP = function (t) {
+	var test = this.Tests[t];
+	return test.getOP();
+}
+
+TestSet.prototype.getZ = function (t) {
+	var test = this.Tests[t];
+	return test.getZ();
+}
+
+TestSet.prototype.getAnswer = function (t) {
+	var test = this.Tests[t];
+	return test.getAnswer();
+}
+
+TestSet.prototype.isAnswerCorrect = function (t) {
+	var test = this.Tests[t];
+	return test.isAnswerCorrect();
+}
+
+var MyTestSet = new TestSet();
+
+function generateTest() {
+	var OP_r = Math.random();
+
+	// Increase number of test
+	TEST_NUM = TEST_NUM + 1;
+
+	// Generate operator
+	if (OP_r < 0.5) {
+		OP = "*";
+	} else {
+		OP = ":"
+	}
+
+	// Generate X,Y,Z
+	switch (OP) {
+		case "*":
+			// X * Y = Z
+			X = Math.random()*10000 % MAX_NUM;
+			X = Math.round(X);
+			Y = Math.random()*10000 % MAX_NUM;
+			Y = Math.round(Y);
+			Z = X * Y;
+			break;
+		case ":":
+			// X : Y = Z
+			Z = Math.random()*10000 % MAX_NUM;
+			Z = Math.round(Z);
+			Y = Math.random()*10000 % MAX_NUM;
+			Y = Math.round(Y);
+			X = Z * Y;
+			break;
+		default:
+	}	
+
+	// Show test
+	document.getElementById("DIV_TEST").style.display = "block";
+	//document.getElementById("DIV_TEST").style.visibility = "visible";
+	document.getElementById("DIV_FINAL").style.display = "none";
+	document.getElementById("HEADER").innerHTML = "Test " + TEST_NUM + "/" + NUMBER_OF_TESTS;
+	document.getElementById("X").innerHTML = X;
+	document.getElementById("OPERATOR").innerHTML = OP;
+	document.getElementById("Y").innerHTML = Y;
+	document.getElementById("ANSWER").value = "";
+	document.getElementById("ANSWER").focus();
+	document.getElementById("DIV_RESULT").innerHTML = "&nbsp;";
+	document.getElementById("CHECK").style.visibility = "visible";
+	document.getElementById("NEXT").style.visibility = "hidden";
+	document.getElementById("FINAL").style.visibility = "hidden";
+	if (DEBUG) {
+		document.getElementById("Z").innerHTML = Z;
+	}
+}
+
+function checkAnswer() {
+	var answer = document.getElementById("ANSWER").value;
+	var correct = false;
+	
+	if (answer == Z) {correct=true;}
+
+	if (DEBUG) {
+		document.getElementById("Z").innerHTML = Z + " <-> " + answer;
+	}
+
+	if (correct) { 
+		document.getElementById("DIV_RESULT").innerHTML = "<div id=\"answer-correct\">CORRECT</div>";
+	} else {
+		document.getElementById("DIV_RESULT").innerHTML = "<div id=\"answer-wrong\">WRONG !!!</div>";
+	}
+
+	// Add test to Test Set for statistics in final result page
+	MyTestSet.addTest(X,Y,OP,Z,answer,correct);
+
+	// UX Button management
+	document.getElementById("CHECK").style.visibility = "hidden";
+	if (TEST_NUM < NUMBER_OF_TESTS) {
+		document.getElementById("NEXT").style.visibility = "visible";
+	        document.getElementById("NEXT").focus();
+	} else {
+		document.getElementById("FINAL").style.visibility = "visible";
+	        document.getElementById("FINAL").focus();
+	}
+}
+
+function showFinalReport() {
+	var report = "Final Report:<p>";
+	var numOfTests = MyTestSet.getNumOfTests();
+
+	for (i = 0; i < numOfTests; i++) {
+		report = report + MyTestSet.getX(i) + " ";
+		report = report + MyTestSet.getOP(i) + " ";
+		report = report + MyTestSet.getY(i) + " = ";
+		report = report + MyTestSet.getAnswer(i) + " ";
+		if (MyTestSet.isAnswerCorrect(i)) {
+			report = report + " (CORRECT) ";
+		} else {
+			report = report + " (WRONG) ";
+		}
+		report = report + "<br>";
+	}
+
+	document.getElementById("DIV_TEST").style.display = "none";
+	document.getElementById("DIV_FINAL").style.display = "block";
+	document.getElementById("DIV_FINAL_REPORT").innerHTML = report;
+	document.getElementById("BUTTON_NEW").focus();
+}
+
+		</script>
+	</head>
+
+<body onload="generateTest()">
+	<h1>MATH TEST</h1>
+	<div id="DIV_TEST">
+	<form>
+	<table border="0">
+		<tr>
+			<td colspan="8" id="HEADER">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id="X" width="25px">X<td>
+			<td id="OPERATOR" width="25px">op</td>
+			<td id="Y" width="25px">Y</td>
+			<td>=</td>
+			<td><input type="text" size="5" name="ANSWER" id="ANSWER" onKeyDown = "if (event.keyCode == 13) {event.keyCode=checkAnswer();return false;}"></td>
+			<td><input type="button" value="Check" id="CHECK" onClick="checkAnswer()"></td>
+			<td id="Z"></td>
+		</tr>
+		<tr>
+			<td colspan="8" id="DIV_RESULT">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="8" align="center">
+				<input type="button" value="Next" id="NEXT" onClick="generateTest()">
+				<input type="button" value="Final Results" id="FINAL" onClick="showFinalReport()">
+			</td>
+		</tr>
+	</table>
+	</form>
+	</div>
+
+	<div id="DIV_FINAL">
+	<div id="DIV_FINAL_REPORT">
+	</div>
+	<form>
+	<input type="button" value="New test" id="BUTTON_NEW" onClick="location.reload()">
+	</form>
+	</div>
+</body>
