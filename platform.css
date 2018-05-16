@@ -1,0 +1,18 @@
+#canvas { 
+ width: 805px;
+ margin: auto;
+}
+
+#modules { 
+ width: 150px;
+ height: 600px;
+ border: solid 1px;
+ float: left;
+}
+
+#runtime { 
+ width: 650px;
+ height: 600px;
+ border: solid 1px;
+ float: left;
+}

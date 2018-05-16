@@ -1,9 +1,22 @@
 <html>
-	<body>
-		<h1>Math4Kids</h1>
-		<ul>
-			<li><a href="math-test_+-.html?n=40&m=100">Test + and - (40 tests)</a>
-			<li><a href="math-test_mpldiv.html?n=40&m=6">Test * and : (40 tests)</a>
-		</ul>
-	</body>
+  <head>
+    <title>Education Platform for Kids</title>
+    <link rel="stylesheet" href="platform.css">
+  </head>
+  <body>
+    <div id="canvas">
+      <div id="head">
+	<h1 onClick='alert("Hello! I am an education platform for Kids.");'>Education Platform for Kids</h1>
+      </div>
+      <div id="modules">
+	<ul>
+	  <li><a href="math-test_+-.html?n=5&m=100" target="ifrm">Test + and -</a>
+	  <li><a href="math-test_mpldiv.html?n=5&m=10" target="ifrm">Test * and :</a>
+	</ul>
+      </div>
+      <div id="runtime">
+	<iframe name="ifrm" src="" frameborder="1" width="100%" height="100%">
+      </div>
+    </div>
+  </body>
 </html>
