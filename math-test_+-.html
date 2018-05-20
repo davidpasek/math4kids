@@ -7,9 +7,17 @@
 //
 //var DEBUG = true; // Run in debug mode?
 var DEBUG = false; // Run in debug mode?
-var NUMBER_OF_TESTS = 5; // Total number of tests is test set
+var TEST_ID = "MATH-ADDITION-SUBSTRACTION"; // Test identification
+var BigDataStorage_IP = ""; // Big Data Storage IP address
+//var BigDataStorage_IP = "192.168.14.51"; // Big Data Storage IP address
+
+// these variable can be rewritten by URP parameters
+var NUMBER_OF_TESTS = 5; // Total number of tests in test set
 var MAX_NUM=100; // Maximal Z number in tests X + Y = Z and X number in tests X - Y = Z
+
+// global counters
 var TEST_NUM = 0; // Current number of test from test set
+
 // Test is X + Y = Z or X - Y = Z
 var X;
 var Y;
@@ -221,9 +229,31 @@ function checkAnswer() {
 	}
 }
 
+function SendLogInsightMessage (IP, message) {
+      console.log('Send-LogInsight-Message IP: ' + IP);
+      console.log('Send-LogInsight-Message message: ' + message);
+
+      var xhttp = new XMLHttpRequest();
+      var URI= "http://" + IP + ":9000/api/v1/messages/ingest/1";
+      console.log('Send-LogInsight-Message URI: ' + URI);
+      xhttp.open("POST", URI, true);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var body = '{"messages":[{"text":"'+ message +' "}]}' 
+      xhttp.send(body);
+      console.log('Send-LogInsight-Message Message: ' + body);
+      //var response = JSON.parse(xhttp.responseText);
+      var response = xhttp.responseText;
+      console.log('Send-LogInsight-Message Response: ' + response);
+}
+
 function showFinalReport() {
-	var report = "Final Report:<p>";
+        var report = "<b>Final Report:</b><br><br>";
+	var stat = "<b>Final Statistics:</b><br><br>";
+	var result = "";
 	var numOfTests = MyTestSet.getNumOfTests();
+	var correct = 0;
+	var wrong = 0;
+	var success_percentage = 0;
 
 	for (i = 0; i < numOfTests; i++) {
 		report = report + MyTestSet.getX(i) + " ";
@@ -232,16 +262,39 @@ function showFinalReport() {
 		report = report + MyTestSet.getAnswer(i) + " ";
 		if (MyTestSet.isAnswerCorrect(i)) {
 			report = report + " (CORRECT) ";
+			correct = correct + 1;
 		} else {
 			report = report + " (WRONG) ";
+			wrong = wrong + 1;
 		}
 		report = report + "<br>";
 	}
+	report = "<p>" + report + "</p>";
 
+	// Final statistics
+        success_percentage = (correct / numOfTests) * 100;	
+	stat = stat + "Num of tests: " + numOfTests +  "<br>";
+	stat = stat + "Correct: " + correct + "<br>";
+	stat = stat + "Wrong: " + wrong + "<br>";
+	stat = stat + "Success percentage: " + success_percentage + " %<br>";
+	stat = "<p>" + stat + "</p>";
+
+	// Show final report and statistis
 	document.getElementById("DIV_TEST").style.display = "none";
 	document.getElementById("DIV_FINAL").style.display = "block";
-	document.getElementById("DIV_FINAL_REPORT").innerHTML = report;
+	document.getElementById("DIV_FINAL_REPORT").innerHTML = report + stat;
 	document.getElementById("BUTTON_NEW").focus();
+
+	// Final result fo BigData storage
+	result = result + "TestID:" + TEST_ID +  "; ";
+	result = result + "NumOfExercises:" + numOfTests +  "; ";
+	result = result + "Correct: " + correct + "; ";
+	result = result + "Wrong: " + wrong + "; ";
+	result = result + "SuccessPercentage: " + success_percentage + "%; ";
+
+	if (BigDataStorage_IP !== "") {
+	  SendLogInsightMessage(BigDataStorage_IP,result);
+	}
 }
 
 		</script>
