@@ -234,16 +234,19 @@ function SendLogInsightMessage (IP, message) {
       console.log('Send-LogInsight-Message message: ' + message);
 
       var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+	console.log('Send-LogInsight-Message Response: ' + xhttp.response);
+	console.log('Send-LogInsight-Message ResponseTest: ' + xhttp.responseText);
+	console.log('Send-LogInsight-Message Status: ' + xhttp.status);
+	console.log('Send-LogInsight-Message ReadyState: ' + xhttp.readyState);
+      }
       var URI= "http://" + IP + ":9000/api/v1/messages/ingest/1";
       console.log('Send-LogInsight-Message URI: ' + URI);
       xhttp.open("POST", URI, true);
       xhttp.setRequestHeader("Content-type", "application/json");
       var body = '{"messages":[{"text":"'+ message +' "}]}' 
-      xhttp.send(body);
       console.log('Send-LogInsight-Message Message: ' + body);
-      //var response = JSON.parse(xhttp.responseText);
-      var response = xhttp.responseText;
-      console.log('Send-LogInsight-Message Response: ' + response);
+      xhttp.send(body);
 }
 
 function showFinalReport() {
