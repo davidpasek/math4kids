@@ -8,8 +8,6 @@
 //var DEBUG = true; // Run in debug mode?
 var DEBUG = false; // Run in debug mode?
 var TEST_ID = "MATH-ADDITION-SUBSTRACTION"; // Test identification
-var BigDataStorage_IP = ""; // Big Data Storage IP address
-BigDataStorage_IP = "192.168.14.51"; // LogInsight 
 
 // these variable can be rewritten by URP parameters
 var NUMBER_OF_TESTS = 5; // Total number of tests in test set
@@ -229,26 +227,6 @@ function checkAnswer() {
 	}
 }
 
-function SendLogInsightMessage (IP, message) {
-      console.log('Send-LogInsight-Message IP: ' + IP);
-      console.log('Send-LogInsight-Message message: ' + message);
-
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-	console.log('Send-LogInsight-Message Response: ' + xhttp.response);
-	console.log('Send-LogInsight-Message ResponseTest: ' + xhttp.responseText);
-	console.log('Send-LogInsight-Message Status: ' + xhttp.status);
-	console.log('Send-LogInsight-Message ReadyState: ' + xhttp.readyState);
-      }
-      var URI= "http://" + IP + ":9000/api/v1/messages/ingest/1";
-      console.log('Send-LogInsight-Message URI: ' + URI);
-      xhttp.open("POST", URI, true);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var body = '{"messages":[{"text":"'+ message +' "}]}' 
-      console.log('Send-LogInsight-Message Message: ' + body);
-      xhttp.send(body);
-}
-
 function showFinalReport() {
         var report = "<b>Final Report:</b><br><br>";
 	var stat = "<b>Final Statistics:</b><br><br>";
@@ -287,17 +265,6 @@ function showFinalReport() {
 	document.getElementById("DIV_FINAL").style.display = "block";
 	document.getElementById("DIV_FINAL_REPORT").innerHTML = report + stat;
 	document.getElementById("BUTTON_NEW").focus();
-
-	// Final result fo BigData storage
-	result = result + "TestID:" + TEST_ID +  "; ";
-	result = result + "NumOfExercises:" + numOfTests +  "; ";
-	result = result + "Correct: " + correct + "; ";
-	result = result + "Wrong: " + wrong + "; ";
-	result = result + "SuccessPercentage: " + success_percentage + "%; ";
-
-	if (BigDataStorage_IP !== "") {
-	  SendLogInsightMessage(BigDataStorage_IP,result);
-	}
 }
 
 		</script>
